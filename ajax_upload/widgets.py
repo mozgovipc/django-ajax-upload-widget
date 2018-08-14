@@ -1,11 +1,11 @@
 from django import forms
 from django.conf import settings
 from django.core.files import File
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from ajax_upload.models import UploadedFile
 
@@ -18,10 +18,10 @@ class AjaxClearableFileInput(forms.ClearableFileInput):
     template_with_clear = ''  # We don't need this
     template_with_initial = '%(input)s'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         attrs = attrs or {}
         if value:
-            filename = u'%s%s' % (settings.MEDIA_URL, value)
+            filename = '%s%s' % (settings.MEDIA_URL, value)
         else:
             filename = ''
         attrs.update({
@@ -30,7 +30,7 @@ class AjaxClearableFileInput(forms.ClearableFileInput):
             'data-required': self.is_required or '',
             'data-upload-url': reverse('ajax-upload')
         })
-        output = super(AjaxClearableFileInput, self).render(name, value, attrs)
+        output = super(AjaxClearableFileInput, self).render(name, value, attrs, renderer)
         return mark_safe(output)
 
     def value_from_datadict(self, data, files, name):
@@ -45,7 +45,7 @@ class AjaxClearableFileInput(forms.ClearableFileInput):
             elif file_path.startswith(settings.MEDIA_URL):
                 # Strip and media url to determine the path relative to media url base
                 relative_path = file_path[len(settings.MEDIA_URL):]
-                relative_path = urllib2.unquote(relative_path.encode('utf8')).decode('utf8')
+                relative_path = urllib.parse.unquote(relative_path.encode('utf8')).decode('utf8')
                 try:
                     uploaded_file = UploadedFile.objects.get(file=relative_path)
                 except UploadedFile.DoesNotExist:
@@ -54,5 +54,5 @@ class AjaxClearableFileInput(forms.ClearableFileInput):
                 else:
                     return File(uploaded_file.file)
             else:
-                raise AjaxUploadException(u'%s %s' % (_('File path not allowed:'), file_path))
+                raise AjaxUploadException('%s %s' % (_('File path not allowed:'), file_path))
         return None

@@ -12,7 +12,8 @@ setup(
     description=ajax_upload.__doc__,
     long_description=open('README.rst').read(),
     classifiers=[
-        'Framework :: Django',
+        'Programming Language :: Python :: 3',
+        'Framework :: Django :: 1.11',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
