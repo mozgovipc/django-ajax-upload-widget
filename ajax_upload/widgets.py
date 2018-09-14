@@ -45,7 +45,7 @@ class AjaxClearableFileInput(forms.ClearableFileInput):
             elif file_path.startswith(settings.MEDIA_URL):
                 # Strip and media url to determine the path relative to media url base
                 relative_path = file_path[len(settings.MEDIA_URL):]
-                relative_path = urllib.parse.unquote(relative_path.encode('utf8')).decode('utf8')
+                relative_path = urllib.parse.unquote(relative_path)
                 try:
                     uploaded_file = UploadedFile.objects.get(file=relative_path)
                 except UploadedFile.DoesNotExist:
