@@ -3,7 +3,7 @@ import os
 import unittest
 
 from django.conf import settings
-from django.urls import reverse
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.translation import ugettext as _
 
